@@ -2,9 +2,8 @@
 
 $(document).ready(function () {
 
-
+    console.log("aslkdjfalksjdf");
     var pckry;
-    var basket_id = $('#items').attr('row');   
 
     var $container = $('.packery-container');
     $container.packery({
@@ -23,9 +22,7 @@ $(document).ready(function () {
 
     pckry = $container.data('packery');
 
-
-            
-
+    console.log("asdf");
 
 
 
