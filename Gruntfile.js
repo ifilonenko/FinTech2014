@@ -14,11 +14,18 @@ module.exports = function(grunt) {
           banner: '<!-- I am a banner <% includes.files.dest %> -->'
         }
       }
+    },
+    watch: {
+      scripts: {
+        files: ['source/**/*.html'],
+        tasks: ['default']
+      }
     }
   });
 
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-includes');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task(s).
   grunt.registerTask('default', ['includes']);
