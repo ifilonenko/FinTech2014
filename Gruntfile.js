@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     includes: {
       files: {
-        src: ['source/html/index.html'], // Source files
+        src: ['source/html/index.html', 'source/html/dashboard.html'], // Source files
         dest: '.', // Destination directory
         flatten: true,
         cwd: '.',
