@@ -1,0 +1,23 @@
+<p></p>
+{% if not show %}
+You must be the owner to edit this class.
+{% else %}
+
+<div>
+  <button type="button" href="javascript:;" style="float:right" onclick="delete_class('{% url 'classes:delete_class' tclass.id  %}')" class="btn btn-danger glyphicon glyphicon-trash" id="deleteButton" data-loading-text="Deleting..."> Delete Class</button></br>
+    {% load bootstrap %}
+     <form class="form" role="form" id="editClassForm" method="post" action="{% url 'classes:edit_class' tclass.id %}">
+    {% csrf_token %}
+    {{ class_form|bootstrap }}
+       <div class="form-group">
+          <div class="col-sm-12">
+                <a href="javascript:;" style="float:right" onclick="edit_class('{% url 'classes:edit_class' tclass.id  %}', '#editClassForm')" class="btn btn-default btn-primary" data-loading-text="Saving..."><span class="glyphicon glyphicon-pencil"></span>Submit</a>
+               <!-- <a style="float:right" id="editClassButton" data-loading-text="Saving..." class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span>Submit</a> -->
+          </div>
+      </div>
+    </form>
+    </br>
+    </br>
+</div>
+
+{% endif %}

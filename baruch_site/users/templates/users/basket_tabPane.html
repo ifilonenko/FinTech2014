@@ -1,0 +1,36 @@
+{% if user_profile.basket_set.all %}
+{% for basket in user_profile.basket_set.all %}
+<div class="item masonry-brick">
+  <div class="picture">
+    <div class="item-content">
+       <div>
+        <a href="javascript:;" onclick="addBasketToClass('{% url 'classes:add_basket_to_class' %}', '#basketClassModal', encodeURI('{{basket.name}}'), {{basket.pk}} )" data-target="#basketClassModal" class="btn btn-default glyphicon glyphicon-plus" ></a>
+      </div>
+      <div class="description">
+        <h3><a href="{% url 'polls:basket_detail' basket.id %}">{{ basket.name}}</a></h3>
+
+        {% for cork in basket.corks.all %}
+          <!--<li>{{cork.question}}</li>-->
+        {% endfor %}
+
+      </div>
+      <div class="meta">
+        <span>
+          <i class="glyphicon glyphicon-calendar"></i>
+          {{ basket.pub_date }}
+          <i class="glyphicon glyphicon-user"></i>
+          <a href="{% url 'accounts:profile' basket.owner %}">{{ basket.owner }}</a>
+          <br>
+          <i class="glyphicon glyphicon-tag"></i>
+
+          {{ basket.tags.all|join:", " }}
+
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<p>No baskets are available. Please create a Basket to view it here.</p>
+{% endif %}

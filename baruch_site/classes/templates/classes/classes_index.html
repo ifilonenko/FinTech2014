@@ -1,0 +1,105 @@
+{% extends "polls/base_polls.html" %}
+{% load staticfiles %}
+
+{% block title %}
+{{ tclass.name }}
+{% endblock %}
+
+{% block body %}
+
+<div id="wrap">
+
+  {% include "polls/navbar.html" %}
+
+  <div class="container" id="body">
+    <div class="row">
+      <div class="col-md-9 col-md-offset-1">
+
+        <h2>{{ tclass.name }}</h2>
+        <p>{{ tclass.description }} | <a href="{% url 'accounts:profile' tclass.owner %}"><i class="glyphicon glyphicon-user"></i> {{ tclass.owner.first_name }} {{ tclass.owner.last_name }}</a></p>
+        <div class="pull-right">
+          {% if user == tclass.owner %}
+          <a href="#" class="btn btn-default"><span class="glyphicon glyphicon-user"></span> Your class!</a>
+          {% else %}
+          {% if tclass in user.taking.all %}
+          <a href="javascript:;" onclick="manage_enrollment('{% url 'classes:manage_enrollment' %}', {{ tclass.id }}, 'drop')" class="btn btn-default btn-danger" id="enroll_button"><span class="glyphicon glyphicon-minus-sign"></span> Drop Class</a>
+          {% else %}
+          <a href="javascript:;" onclick="manage_enrollment('{% url 'classes:manage_enrollment' %}', {{ tclass.id }}, 'enroll')" class="btn btn-default btn-success" id="enroll_button"><span class="glyphicon glyphicon-plus-sign"></span> Enroll</a>
+          {% endif %}
+          {% endif %}
+        </div>
+
+        <ul id="classesTabs" class="nav nav-tabs">
+          <li class="active"><a href="" data-url="{% url 'classes:get_baskets_for_class' %}" data-toggle="tab">Baskets</a></li>
+          {% if tclass.owner == user %}
+          <li><a href="" data-url="{% url 'classes:manage_vote' %}" data-toggle="tab">Manage Voting</a></li>
+          <li><a id="cork_viewer" href="" data-url="{% url 'classes:cork_viewer' %}" data-toggle="tab">Cork Viewer</a></li>
+          <li><a href=""  data-url="{% url 'classes:get_stats_for_class' %}" data-toggle="tab">Statistics</a></li>
+          <li><a href="" data-url="{% url 'classes:get_students_for_class' %}" data-toggle="tab">Students</a></li>
+          <li><a href="" data-url="{% url 'classes:get_class_edit_form' %}" data-toggle="tab">Edit</a></li>
+          {% else %}
+            <li><a href="" data-url="{% url 'classes:vote_on_cork' %}" data-toggle="tab">Vote!</a></li>
+          {% endif %}
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+
+          <div class="tab-pane active" id="class_baskets">
+            <div id="loader"><img src="/static/polls/css/images/loader.gif"/></div>
+            <div id="tab_content"></div>
+          </div>
+          
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  {% endblock %}
+  {% block optional_js %}
+  <script type="text/javascript" src="{% static "classes/js/class_detail.js" %}"></script>
+  <script type="text/javascript" src="{% static "classes/js/manage_voting.js" %}"></script>
+  <script type="text/javascript" src="{% static "classes/js/class_stats.js" %}"></script>
+  <script type="text/javascript" src="{% static "classes/js/highcharts.js" %}"></script>
+  <script type="text/javascript" src="{% static "classes/js/jquery.highchartTable-min.js" %}"></script>
+  <script type="text/javascript">
+
+  $(document).ready(function(e) {
+
+  // init when opens page
+  var url = $('#classesTabs .active a').attr('data-url');
+  get_tab(url, {{ tclass.id }}, 1);
+  var cork_view = false;
+
+  $('#classesTabs a').click(function (e) {
+    e.preventDefault();
+    var url = $(this).attr("data-url");
+    if ($(this).parent().attr('class') == "active") return;  
+    
+    // Refresh loop in cork_view 
+    if ($(this).attr('id') != "cork_viewer") {
+      if (cork_view != false) {
+        clearInterval(cork_view);
+        cork_view = false;
+      }
+      get_tab(url, {{ tclass.id }}, 1);
+    }
+    else {
+      get_tab(url, {{ tclass.id }}, 1);
+      cork_view = setInterval(function(){
+        get_tab(url, {{ tclass.id }}, 1);
+       }, 2000);    // every 2 seconds
+    }
+
+    
+  });
+
+});
+
+    $(document).ready(function(e) {
+      $('.selectpicker').selectpicker();
+    });
+  </script> 
+  {% endblock %}

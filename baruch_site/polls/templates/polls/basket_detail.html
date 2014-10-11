@@ -1,0 +1,118 @@
+{% extends "polls/base_polls.html" %}
+{% load staticfiles %}
+{% block title %}
+Dashboard
+{% endblock %}
+
+
+{% block body %}
+
+<div id="wrap">
+
+  {% include "polls/navbar.html" %}
+
+  <div class="container">
+
+    <h2 style="text-align: center; display: inline-block">{{basket.name}}</h2>
+    {% if user.pk == basket.owner.pk %}
+      <button type="button" class="btn btn-primary btn-default edit_basket" style="margin-left: 20px; margin-bottom: 10px" row={{basket.pk}} data-target="#editBasketStuffModal" data-toggle="modal">Edit Title/References</button>
+      <button type="button" class="btn btn-primary btn-default edit" style="margin-left: 20px; margin-bottom: 10px">Edit Basket</button>
+      <div id="userEditOptions" class="hidden">
+        <button type="button" class="btn btn-danger glyphicon glyphicon-trash"> Delete Basket</button>
+        <button type="button" class="btn btn-success glyphicon glyphicon-floppy-save">Update</button>
+        <button type="button" class="btn btn-warning glyphicon glyphicon-minus" id="cancel">Cancel</button>
+      </div>
+    {% else %}
+    <!-- <p>Can't edit</p> -->
+    {% endif %}
+
+
+    <div class="meta">
+      <span>
+        <i class="glyphicon glyphicon-calendar"></i>
+        {{ basket.update }}
+        <i class="glyphicon glyphicon-user"></i>
+        <a href="{% url 'accounts:profile' basket.owner %}">{{ basket.owner }}</a>
+        <i class="glyphicon glyphicon-tag"></i>
+
+        {{ basket.tags.all|join:", " }}
+
+      </span>
+    </div>
+
+    <!-- Add basket references here -->
+    <div>
+      <h3> References </h3>
+      {% if references %}
+        <ol>
+        {% for reference in references %}
+          <li>{{reference.description}}   |   {{reference.url}}</li>
+        {% endfor %}
+        </ol>
+      {% else %}
+        <p style="margin-left: 20px"> No references were added yet. </p>
+      {% endif %}
+    </div>
+
+    <h3> Corks </h3>
+    <div id="items" class="packery-container" style="clear: both" row="{{basket.pk}}">
+
+      {% if corks %}
+      {% for poll in corks %}
+      {% if poll.owner == user or not poll.cork.private %}
+      <div class="item" row="{{poll.pk}}" >
+        {% if user.pk == basket.owner.pk %}
+        <div id="corkEditNav" class="hidden">
+          <button type="button" class="btn btn-default glyphicon glyphicon-remove" style="float: right"></button>
+        </div>
+        {% endif %}
+      
+          <div class="item-content" style="padding-top: 0px">
+            <div class="description">
+              <h3>{{ poll.cork.question }}</h3>
+
+            </div>
+
+            <div class="meta">
+              <span>
+                <i class="glyphicon glyphicon-calendar"></i>
+                {{ poll.cork.update }}
+                <i class="glyphicon glyphicon-user"></i>
+                <a href="{% url 'accounts:profile' poll.cork.owner %}">{{ poll.cork.owner }}</a>
+                <br>
+                <i class="glyphicon glyphicon-tag"></i>
+
+                {{ poll.cork.tags.all|join:", " }}
+
+              </span>
+            </div>
+          </div>
+        <!-- </div> -->
+      </div>
+      {% endif %}
+      {% endfor %}
+      {% else %}
+      <p>No corks were added to this basket.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% endblock %}
+
+  {% block optional_js %}
+  <script src="{% static "polls/js/basket_detail.js" %}" type="text/javascript"></script>
+  <script>
+var $container = $('#items');
+
+$container.imagesLoaded( function(){
+  $container.masonry({
+    itemSelector : '.item'
+  });
+});
+</script>
+<script type="text/javascript">
+          $(document).ready(function(e) {
+              $('.selectpicker').selectpicker();
+          });
+      </script> 
+  {% endblock %}

@@ -1,0 +1,18 @@
+<form action="{% url 'polls:new_basket' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% load bootstrap %}
+          {{ basket_form|bootstrap }}
+          <label class="control-label" for="references">References</label>
+          {% for reference, link in refList %}
+          <div>
+            <div class="form-group">
+
+              <textarea type="text" rows="1" cols="40" class="form-control" id="id_references" name="description" placeholder="Reference" >{{reference}}</textarea>
+            </div>
+            <div class="form-group">
+              <input type="url" class="form-control"  id="id_reference_link" name="link" maxlength="200" placeholder="Link to Reference" value="{{link}}" />
+            </div>
+          </div>
+          {% endfor %}
+          <button type="button" class="btn btn-default" id="add_reference">Add Reference</button>
+</form>

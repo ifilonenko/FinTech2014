@@ -1,0 +1,16 @@
+<form action="" id="editCorkForm" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {% load bootstrap %}
+  {{ form|bootstrap }}
+  <label class="control-label" for="choices">Choices</label>
+
+  {% for choice in choices %}
+  <div class="input-group">
+    <span class="input-group-addon">
+      <input type="radio" disabled="true">
+    </span>
+    <input type="text" class="form-control" id="id_choice" name="choices" value="{{choice}}">
+  </div>
+  <br/>
+    {% endfor %}
+  <button type="button" class="btn btn-default" id="add_choice">Add Choice</button>

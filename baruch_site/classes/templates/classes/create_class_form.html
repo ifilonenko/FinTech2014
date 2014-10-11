@@ -1,0 +1,6 @@
+<form action="{% url 'classes:new_class' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% load bootstrap %}
+          {{ class_form|bootstrap }}
+
+</form>

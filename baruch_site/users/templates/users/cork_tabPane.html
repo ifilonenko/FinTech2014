@@ -1,0 +1,58 @@
+{% for cork in user_profile.cork_set.all %}
+{% if cork.owner == user or not cork.private %}
+<div class="item masonry-brick">
+  <div class="picture">
+
+          <div class="dropdown">
+            <a href="#" class="btn btn-default dropdown-toggle glyphicon glyphicon-plus" data-toggle="dropdown"></a>
+              <ul class="dropdown-menu" style="padding: 2px;min-width: 100px;">
+                {% if latest_basket_list %}
+                <li class="dropdown submenu">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Add to Basket</a>
+                  <ul class="dropdown-menu submenu-show submenu-hide">
+                    <li class="dropdown">
+                      {% for basket in latest_basket_list %} 
+                      <a class="editBasket" row={{cork.pk}} rowB={{basket.pk}} data-toggle="modal" data-target="#basketStatusModal">{{ basket.name }}</a>
+                      {% endfor %}
+                      <a class="otherBasket" row={{cork.pk}} title="{{cork.question}}" data-toggle="modal" data-target="#editBasketModal">Other...</a>
+                    </li>
+                 </ul> 
+                  </li>
+                {% endif %}
+                <li><a class="newBasket" data-target="#createBasketCorkModal" row={{cork.pk}} title="{{cork.question}}">Create New Basket</a></li>
+              </ul>
+            {% if user == cork.owner %}
+            <a href="#" class="btn btn-default glyphicon glyphicon-pencil" row="{{cork.pk}}" ></a>
+            <a href="#" class="btn btn-default glyphicon glyphicon-trash" row="{{cork.pk}}" ></a>
+            {% endif %}
+          </div>
+
+    {% if cork.image %}
+      <img alt="" src="{{ cork.image.url }}">
+    {% elif cork.image_url %}
+      <a class="btn btn-primary" href="{{cork.image_url}}" style="margin: 30px 0 0 10px">Link to Source</a>
+    {% else %}
+    <!-- <p>No source</p> -->
+    {% endif %}
+    <div class="item-content">
+      <div class="description">
+        <h3>{{ cork.question }}</h3>
+      </div>
+      <div class="meta">
+        <span>
+          <i class="glyphicon glyphicon-calendar"></i>
+          {{ cork.pub_date }}
+          <i class="glyphicon glyphicon-user"></i>
+          {{ cork.owner }}</i>
+          <br>
+          <i class="glyphicon glyphicon-tag"></i>
+
+          {{ cork.tags.all|join:", " }}
+
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}

@@ -1,0 +1,123 @@
+{% extends "polls/base_polls.html" %}
+
+{% block title %}
+Search
+{% endblock %}
+
+{% block body %}
+
+<div id="wrap">
+
+  {% include "polls/navbar.html" %}
+
+  <div class="container">
+
+    <h2>Your search results for: {{ query }}</h2>
+
+    <div id="items" style="clear: both">
+
+    {% if not search_entry_list %}
+    No results found.
+    {% else %}
+
+    {% if content_type == "user" %}
+      <div class="row">
+      {% for user in search_entry_list %}
+        
+            <div class="col-xs-6 col-md-4" style="margin-left: 18px">
+              <div class="panel panel-default">
+                <div class="panel-heading">{{ user.object.last_name }}, {{ user.object.first_name}}</div>
+                  <div class="panel-body">
+                    <p><span class="badge">{{ user.object.relationships.following.count }}</span>  following</p>
+                    <p><span class="badge">{{ user.object.relationships.followers.count }}</span> followers</p>
+                    <p class="pull-right"><a href="{% url 'accounts:profile' user %}">Go to {{ user.object.username }}'s page</a></p>
+                </div>
+              </div>
+            </div>
+      {% endfor %}
+      </div>
+
+      {% elif content_type == "class" %}
+
+      {% for class in search_entry_list %}
+      <div class="col-xs-6 col-md-4" style="margin-left: 18px">
+              <div class="panel panel-default">
+                <div class="panel-heading">{{ class.object.name }}</div>
+                  <div class="panel-body">
+                    <ul>
+                    {% for basket in class.object.baskets.all %}
+                    <li>{{ basket.name }}</li>
+                    {% empty %}
+                    No baskets in this class yet.
+                    {% endfor %}
+                    </ul>
+
+                    <p class="pull-right"><a href="{% url 'classes:class_detail' class.object.id %}">Go to {{ class.object.name }}</a></p>
+                </div>
+              </div>
+            </div>
+      {% endfor %}
+
+    {% else %}
+
+    {% for result in search_entry_list %}
+    {% if not result.object.private %}
+    <div class="item masonry-brick">
+        <div class="picture">
+          
+          {% if result.object.image %}
+          <img alt="" src="{{ result.object.image.url  }}">
+          {% elif result.object.image_url %}
+          <a class="btn btn-primary" href="{{result.object.image_url}}" style="margin: 30px 0 0 10px">Link to Source</a>
+          {% else %}
+          <img style="padding-bottom: -20px;">
+          {% endif %}
+
+          <div class="item-content">
+            <div class="description">
+              <h3>{% if result.object.question %}{{ result.object.question }} {% else %}{{ result.object.name }} {% endif %}</h3>
+            </div>
+
+            <div class="meta">
+              <span>
+                <i class="glyphicon glyphicon-calendar"></i>
+                {{ result.object.pub_date }}
+                <i class="glyphicon glyphicon-user"></i>
+                <a href="{% url 'accounts:profile' result.object.owner %}">{{ result.object.owner }}</a>
+                <br>
+                <i class="glyphicon glyphicon-tag"></i>
+
+                {{ result.object.tags.all|join:", " }}
+
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    {% endfor %}
+
+    {% endif %}
+    {% endif %}
+    </div>
+  </div>
+
+  {% endblock %}
+
+    {% block optional_js %}
+  <script>
+var $container = $('#items');
+
+$container.imagesLoaded( function(){
+  $container.masonry({
+    itemSelector : '.item'
+  });
+});
+</script>
+<script type="text/javascript">
+          $(document).ready(function(e) {
+              $('.selectpicker').selectpicker();
+          });
+      </script> 
+  {% endblock %}

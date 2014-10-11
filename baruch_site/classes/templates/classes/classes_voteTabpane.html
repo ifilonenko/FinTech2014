@@ -1,0 +1,85 @@
+
+<!-- When you delete a corkbasketmembership, you lose all the vote history associated with that membership... -->
+<p></p>
+{% if show %}
+    <a href="javascript:;" onclick="get_tab('{% url 'classes:vote_on_cork' %}', {{ basket_class.tclass.id }}, 1)" class="btn btn-primary" style="float:right">Refresh</a>
+    <!-- this refresh button doesn't work if basket_class is None -->
+    {% if basket_class.cork_to_vote_on %}
+        <h3>{{basket_class.basket.name}}</h3>
+        <h4 style="align: center;" id="cork_question">{{basket_class.cork_to_vote_on.cork.question}}</h4>
+            <form id="submitVoteForm" action="{% url 'classes:submit_vote' basket_class.cork_to_vote_on.id second_vote %}" method="post">
+              {% csrf_token %}
+
+              {% if user_voted %}
+                <span class="help-block">You already voted!</span>
+                <ol type=A>
+                {% for choice in basket_class.cork_to_vote_on.cork.choice_set.all %}
+                  {% if user_voted.choice == choice %}
+                    <li><input type="radio" disabled checked name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+                  {% else %}
+                    <li><input type="radio" disabled name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+                  {% endif %}
+                      <label for="choice{{ forloop.counter }}">{{ choice.choice_text }} </label></li>
+
+                {% endfor %}
+                </ol>
+                <input type="submit" id="submitVoteBtn" class="btn btn-primary disabled" data-loading-text="Voting..." value="Vote" />
+              {% else %}
+                <ol type=A>
+                {% for choice in basket_class.cork_to_vote_on.cork.choice_set.all %}
+                  <li><input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+                      <label for="choice{{ forloop.counter }}">{{ choice.choice_text }} </label></li>
+                {% endfor %}
+                </ol>
+                <input type="submit" id="submitVoteBtn" class="btn btn-primary" data-loading-text="Voting..." value="Vote" />
+              {% endif %}
+            </form>
+    {% else %}
+        <h4>No corks were open for voting yet...</h4>
+    {% endif %}
+
+{% else %}
+    <p>You should enroll to vote!</p>
+{% endif %}
+
+<script>
+$(document).ready(function() {
+  $('#submitVoteBtn').click(function(ev) {
+    ev.preventDefault();
+    var btn = $(this);
+    btn.button('loading');
+
+    $('#submitVoteForm').ajaxSubmit({
+      complete: function(xhr, textStatus) {
+        // btn.button('reset');
+        // console.log(form);
+      },
+      success: function(response) {
+        $('#cork_question').find('.alert').remove();
+        $('#cork_question').prepend('<div style="text-align: center;" class="alert alert-success"> \
+            <a class="close" data-dismiss="alert">×</a> \
+            You voted successfully!</div>');   
+        btn.attr('value', 'Done voting!');
+        $('#submitVoteForm li').each(function() {
+          $(this).children('input').attr('disabled', true);
+        })
+      },
+      error: function(response) {
+        console.log(response);
+        $('#cork_question').find('.alert').remove();
+        if (response.status == 400 || response.status == 404)
+          $('#cork_question').prepend('<div style="text-align: center;" class="alert alert-danger"> \
+              <a class="close" data-dismiss="alert">×</a> '
+              + response.responseText +'</div>');
+        else 
+          $('#cork_question').prepend('<div style="text-align: center;" class="alert alert-danger"> \
+              <a class="close" data-dismiss="alert">×</a> \
+             There was an error responding to server.</div>');
+        btn.button('reset');
+      }
+    });
+
+    return false;
+  })
+}); 
+</script>

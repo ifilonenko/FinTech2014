@@ -1,0 +1,363 @@
+{% load bootstrap %}
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="{% url 'polls:index' %}">Pear Project</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="{% url 'polls:index' %}">Home</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'accounts:profile' user  %}">My Account</a></li>
+        {% endif %}
+      </ul>
+
+      <ul class = "nav navbar-nav pull-right">
+
+
+        {% if not user.is_authenticated %}
+        <li class="dropdown navbar-right">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Sign in<b class="caret"></b></a>
+          <ul class="dropdown-menu" style="padding: 15px;min-width: 250px;">
+            <li>
+              <div class="row">
+                <div class="col-md-12">
+                  <form class="form" role="form" method="post" action="{% url 'accounts:login' %}" accept-charset="UTF-8" id="login-nav">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <label class="sr-only" for="exampleInputEmail2">Username</label>
+                      <input type="text" name="username" class="form-control" id="exampleInputEmail2" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="sr-only" for="exampleInputPassword2">Password</label>
+                      <input type="password" name="password" class="form-control" id="exampleInputPassword2" placeholder="Password" required>
+                    </div>
+
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-success btn-block">Sign in</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </li>
+        {% endif %}
+
+        <li class="dropdown navbar-right">
+          <ul class="nav navbar-nav">
+          {% if not user.is_authenticated %}
+            <!-- Note: Sign up removed from live site, will add users manually for Simon class beta testing
+
+            <li><a href="{% url 'accounts:registration' %}">Sign up</a></li>
+
+            -->
+            {% else %}
+            
+            <li class="dropdown navbar-right">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <!-- Button trigger modal -->
+                <li><a href="{% url 'accounts:profile' user %}">My account</a></li>
+                <li><a href="{% url 'accounts:settings' %}">Settings</a></li>
+                <li><a href="{% url 'accounts:logout' %}">Sign out</a></li>
+              </ul>
+            </li>
+
+
+            <li class="dropdown navbar-right">
+              <a href="#" class="dropdown-toggle glyphicon glyphicon-plus" style="font-size:24px;" data-toggle="dropdown"></a>
+              <ul class="dropdown-menu">
+                <li><a id="createCorkButton" data-target="#createCorkModal">Create Cork</a></li>
+                <li><a id="createBasketButton" data-target="#createBasketModal">Create Basket</a></li>
+                <li><a id="createClassButton" data-toggle="modal" data-target="#createClassModal">Create Class</a></li>
+              </ul>
+            </li>
+
+            {% endif%}
+          </ul>
+        </li>
+
+      </ul>
+      {% if user.is_authenticated %}
+      <div class="col-sm-3 col-md-4 pull-right">
+        <div class="form-horizontal">
+          <form class="navbar-form" role="search" action="{% url 'search:search_results' %}" method="GET" id="search-form">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search" name="s" style="">
+              <div class="input-group-btn">
+                <select class="selectpicker" data-width="auto" name="content_type">
+                  <option value="cork">Cork</option>
+                  <option value="basket">Basket</option>
+                  <option value="user">Users</option>
+                  <option value="class">Class</option>
+                </select>
+
+                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+              </div>
+
+            </div>
+          </form>
+        </div>
+        
+      </div>
+
+      {% endif %}
+
+    </div><!--/.navbar-collapse -->
+  </div>
+</div>
+
+<!-- Create Cork Modal -->
+{% if user.is_authenticated %}
+<div class="modal fade" id="createCorkModal" tabindex="-1" role="dialog" aria-labelledby="createCorkModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Create cork</h4>
+      </div>
+      <div class="modal-body">
+        <div class="error"></div>
+        <form id="createCorkForm" action="{% url 'polls:new_cork' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          {{ cork_form|bootstrap }}
+          
+
+          <label class="control-label" for="choices">Choices</label>
+
+          {% for i in "12" %}
+          <div class="input-group">
+            <span class="input-group-addon">
+              <input type="radio" disabled="true"/>
+            </span>
+            <input type="text" class="form-control" name="choices"/>
+          </div>
+          <br>
+          {% endfor %}
+          <button type="button" class="btn btn-default" id="add_choice">Add Choice</button>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" id="submitCorkButton" data-loading-text="Saving..." class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Cork Modal -->
+<div class="modal fade" id="editCorkModal" tabindex="-1" role="dialog" aria-labelledby="editCorkModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Edit cork</h4>
+      </div>
+      <div class="modal-body">
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="submit" id="editCorkButton" data-loading-text="Saving..." class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Create New Basket Modal -->
+<div class="modal fade" id="createBasketModal" tabindex="-1" role="dialog" aria-labelledby="createBasketModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Create New Basket</h4>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'polls:new_basket' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ basket_form|bootstrap }}
+
+          <!-- Add the reference stuff here! -->
+           <label class="control-label" for="references">References</label>
+          <div>
+            <div class="form-group">
+
+              <textarea type="text" cols="40" rows="1" class="form-control" id="id_references" name="description" placeholder="Reference"></textarea>
+            </div>
+            <div class="form-group">
+              <input type="url" class="form-control"  id="id_reference_link" name="link" maxlength="200" placeholder="Link to Reference"/>
+            </div>
+          </div>
+          <button type="button" class="btn btn-default" id="add_reference">Add Reference</button>
+
+        </form>
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" data-loading-text="Saving..." class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Create New Class Modal -->
+<div class="modal fade" id="createClassModal" tabindex="-1" role="dialog" aria-labelledby="createClassModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Create New Class</h4>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'classes:new_class' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ class_form|bootstrap }}
+
+        </form>
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" data-loading-text="Saving..." class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create New Basket from Cork -->
+<!-- Add the reference stuff here -->
+<div class="modal fade" id="createBasketCorkModal" tabindex="-1" role="dialog" aria-labelledby="createBasketCorkModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Create New Basket</h4>
+        <div style="display: none;" row></div>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'polls:new_basket' %}" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ basket_form|bootstrap }}
+          <div class="form-group" >
+            <label class="control-label" for="id_corks">Corks</label>
+            <div class=" ">
+              <select multiple="multiple" class="form-control" id="id_corks" name="corks">
+                <option value=""  SELECTED></option>
+              </select>      
+            </div>
+          </div>
+
+          <!-- Add the reference stuff here! -->
+          <label class="control-label" for="references">References</label>
+          <div>
+            <div class="form-group">
+
+              <textarea type="text" cols="40" rows="1" class="form-control" id="id_references" name="description" placeholder="Reference"></textarea>
+            </div>
+            <div class="form-group">
+              <input type="url" class="form-control"  id="id_reference_link" name="link" maxlength="200" placeholder="Link to Reference"/>
+            </div>
+          </div>
+          <button type="button" class="btn btn-default" id="add_reference">Add Reference</button>
+
+        </form>
+      </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" data-loading-text="Saving..." class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Save to Basket Status Modal -->
+<div class="modal fade" id="basketStatusModal" tabindex="-1" role="dialog" aria-labelledby="basketStatusModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Add To Basket</h4>
+      </div>
+      <div class="modal-body">
+        <div id="loader"><img src="/static/polls/css/images/loader.gif"/></div> 
+        <p></p>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Basket Modal -->
+<div class="modal fade" id="editBasketModal" tabindex="-1" role="dialog" aria-labelledby="editBasketModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Add Cork To Basket</h4>
+      </div>
+      <div class="modal-body">
+        {% csrf_token %}
+        <label class="control-label">Cork Being Added</label>
+        <div class=" ">
+          <select class="form-control" id="cork_id" name="cork_id">
+            <option value="" SELECTED></option>
+          </select>
+<!--           <textarea class="form-control" cols="10" id="id_name" name="name" rows="1"></textarea> 
+-->    </div>
+        <label class="control-label" for="basket_id">Basket To Add Cork</label>
+        <div>
+          <select class="form-control" id="basket_id" name="basket_id">
+            {% for basket in all_baskets %}
+            <option value={{basket.pk}}>{{basket.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <p></p>
+        <div id="loader"><img src="/static/polls/css/images/loader.gif"/></div> 
+        </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" data-loading-text="Saving..." class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Basket Modal -->
+<div class="modal fade" id="editBasketStuffModal" tabindex="-1" role="dialog" aria-labelledby="editBasketStuffModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Edit Basket</h4>
+      </div>
+      <div class="modal-body">
+
+
+        <p></p>
+        <div id="loader"><img src="/static/polls/css/images/loader.gif"/></div> 
+        </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" data-loading-text="Saving..." class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %}

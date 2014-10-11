@@ -1,0 +1,40 @@
+{% extends "polls/base_polls.html" %}
+{% load bootstrap %}
+
+{% block title %}
+Sign up
+{% endblock %}
+
+{% block body %}
+
+<div id="wrap">
+  {% include "polls/navbar.html" %}
+
+  <div class="container">
+    {% if not user.is_authenticated %}
+    <!-- horizontal form -->
+            <div class="row">
+                <div class="span12">
+                    <h2>Sign up to pearProject</h2>
+
+                    <hr />
+
+                    <form class="form-horizontal" role="form" method="POST" action="">
+                        {% csrf_token %}
+                        {{ form|bootstrap_horizontal }}
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <input type="submit" class="btn btn-primary" value="Submit" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+    <!-- ends here -->
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

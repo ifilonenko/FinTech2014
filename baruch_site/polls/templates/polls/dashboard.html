@@ -1,0 +1,149 @@
+{% extends "polls/base_polls.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block body %}
+<div id="wrap">
+
+  {% include "polls/navbar.html" %}
+
+  <div class="container" id="body">
+
+    {% if reg_success %}
+    <div class="alert alert-success alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      You can now login to projectPear!
+    </div>
+    {% endif %}
+
+    {% if login_success == "true" %}
+    <div class="alert alert-success alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      Welcome back, {{ user.username }}!
+    </div>
+    {% endif %}
+
+    {% if login_success == "false" %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      Login details are invalid!
+    </div>
+    {% endif %}
+
+    <div id="items" style="clear: both">
+      {% if latest_poll_list %}
+      {% for poll in latest_poll_list %}
+
+      <div class="item masonry-brick">
+        <div class="picture">
+
+         
+          <div class="dropdown options">
+            <a href="#" class="btn btn-default dropdown-toggle glyphicon glyphicon-plus" data-toggle="dropdown"></a>
+              <ul class="dropdown-menu" style="padding: 2px;min-width: 100px;">
+                {% if latest_basket_list %}
+                <li class="dropdown submenu">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Add to Basket</a>
+                  <ul class="dropdown-menu submenu-show submenu-hide">
+                    <li class="dropdown">
+                      {% for basket in latest_basket_list %}
+                      <a class="editBasket" row={{poll.pk}} rowB={{basket.pk}} data-toggle="modal" data-target="#basketStatusModal">{{ basket.name }}</a>
+                      {% endfor %}
+                      <a class="otherBasket" row={{poll.pk}} title="{{poll.question}}" data-toggle="modal" data-target="#editBasketModal">Other...</a>
+                    </li>
+                 </ul> 
+                  </li>
+                {% endif %}
+                <li><a class="newBasket" data-target="#createBasketCorkModal" row={{poll.pk}} title="{{poll.question}}">Create New Basket</a></li>
+              </ul>
+            {% if user == poll.owner %}
+            <a href="#" class="btn btn-default glyphicon glyphicon-pencil" row="{{poll.pk}}" ></a>
+            <a href="#" class="btn btn-default glyphicon glyphicon-trash" row="{{poll.pk}}" ></a>
+            {% endif %}
+          </div>
+          
+          {% if poll.image %}
+          <img alt="" src="{{ poll.image.url }}">
+          {% elif poll.image_url %}
+          <a class="btn btn-primary" href="{{poll.image_url}}" style="margin: 30px 0 0 10px">Link to Source</a>
+          {% else %}
+          <img style="padding-bottom: -20px;">
+          {% endif %}
+
+          <div class="item-content">
+            <div class="description">
+              <h3>{{ poll.question }}</h3>
+
+              <ol type=A>
+              {% for choice in poll.choice_set.all %}
+                <li>{{ choice.choice_text }}
+              {% endfor %}
+              </ol>
+
+            </div>
+
+            <div class="meta">
+              <span>
+                <i class="glyphicon glyphicon-calendar"></i>
+                {{ poll.update }}
+                <i class="glyphicon glyphicon-user"></i>
+                <a href="{% url 'accounts:profile' poll.owner %}">{{ poll.owner }}</a>
+                <br>
+                <i class="glyphicon glyphicon-tag"></i>
+
+                {{ poll.tags.all|join:", " }}
+
+              </span>
+            </div>
+          </div><!-- item-content -->
+
+        </div><!-- picture -->
+
+
+      </div><!-- item -->
+
+      {% endfor %}
+      {% else %}
+      <p>No polls are available test page.</p>
+      {% endif %}
+
+
+
+    </div>
+  </div>
+
+  {% endblock %}
+
+    {% block optional_js %}
+    {% if user.is_authenticated %}
+  <script>
+var $container = $('#items');
+
+$container.imagesLoaded( function(){
+  $container.masonry({
+    itemSelector : '.item'
+  });
+});
+</script>
+<script type="text/javascript">
+    $(document).ready(function(e) {
+        $('.selectpicker').selectpicker();
+
+        $('.picture').hover(function () {
+          $(this).children('.item-content').attr('style', 'opacity: 0.8');
+          $(this).children('img').attr('style', 'opacity: 0.8');
+          $(this).children('.options').attr('style', 'display: inline');
+        });
+
+        $(".picture").mouseleave(function() {
+          $(this).children('.item-content').attr('style', 'opacity: 1');
+          $(this).children('img').attr('style', 'opacity: 1');
+          $(this).children('.options').attr('style', 'display: none');
+        });
+
+    });
+</script> 
+      {% endif %}
+  {% endblock %}

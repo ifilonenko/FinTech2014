@@ -1,0 +1,202 @@
+html, body {
+  height: 100%;
+  font-family: "Helvetica", serif;
+  line-height: 1.8em;
+  color: #333;
+  /*background: white url("/static/polls/css/images/pear.png") no-repeat center;*/
+}
+h1, h2, h3, h4 {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -90px;
+}
+
+#loader {
+  display: none;
+  top: 50%;
+  left: 50%;
+  text-align:center;
+  padding:20px;
+  margin: 0 auto;
+  z-index:2;
+  overflow: auto; 
+}
+
+/* Set the fixed height of the footer here */
+#push, #footer {
+  height: 90px;
+}
+#footer {
+  background-color: #000;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+@media (max-width: 767px) {
+  #footer {
+    margin-left: -20px;
+    margin-right: -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+#wrap > .container {
+  padding-top: 60px;
+}
+.container .credit {
+  margin: 20px 0;
+}
+
+code {
+  font-size: 80%;
+}
+
+li a {
+    color: green;
+}
+
+.centered-form{
+  margin-top: 60px;
+}
+
+.centered-form .panel{
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: rgba(0, 0, 0, 0.3) 20px 20px 20px;
+}
+
+#login-nav input { margin-bottom: 15px; }
+
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+
+#items {}
+
+#items .item {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: linear-gradient(to bottom, #F6F6F6 0%, #EAEAEA 100%) repeat scroll 0 0 transparent;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15), 0 2px 1px rgba(0, 0, 0, 0.1), 0 3px 1px rgba(0, 0, 0, 0.05);
+    text-shadow: 0 1px 0 #DDDDDD;
+    width: 270px;
+    margin: 10px;
+    float: left;
+}
+
+#items .item .item-content {
+  padding: 10px;
+}
+
+#items .item .picture .description {
+    margin-top: 10px;
+}
+
+#items .item .meta span {
+    font-size: 12px !important;
+    line-height: 16px !important;
+    margin-right: 5px;
+}
+
+#items .item .picture {
+    display: block;
+    position: relative;
+    z-index: 5;
+    border-top: 1px solid #999999;
+    border-radius: 4px 4px 4px 4px;
+}
+
+#items .item .picture a.image {
+    display: block;
+    height: auto;
+    width: 100%;
+}
+
+#items .item .picture img {
+    border-radius: 2px 2px 0px 0px;
+    height: auto;
+    position: relative;
+    width: 100%;
+    z-index: -1;
+}
+
+.picture img {
+    height: auto;
+    width: 100%;
+}
+
+/* DROPDOWN SUBMENU */
+.submenu-show
+{
+    border-radius: 3px;
+    display: block;
+    left: 100%;
+    margin-top: -25px !important;
+    moz-border-radius: 3px;
+    position: absolute;
+    webkit-border-radius: 3px;
+}
+.submenu-hide
+{
+    display: none !important;
+    float: right;
+    position: relative;
+    top: auto;
+}
+.navbar .submenu-show:before
+{
+    border-bottom: 7px solid transparent;
+    border-left: none;
+    border-right: 7px solid rgba(0, 0, 0, 0.2);
+    border-top: 7px solid transparent;
+    left: -7px;
+    top: 10px;
+}
+
+.navbar .submenu-show:after
+{
+    border-bottom: 6px solid transparent;
+    border-left: none;
+    border-right: 6px solid #fff;
+    border-top: 6px solid transparent;
+    left: 10px;
+    left: -6px;
+    top: 11px;
+}
+
+#corkEditNav .glyphicon-remove .glyphicon-ok {
+  font-size: 20px;
+  margin-left: 225px;
+/*  text-shadow: 2px 2px 0 #F5FF05;
+*/}
+
+#userEditOptions {
+  margin-top: 20px;
+  float: right;
+}
+
+.dropdown.options {
+  position: absolute;
+  display: none;
+}
+
+/*#userEditNav .glyphicon-remove:hover {
+  font-size: 20px;
+  margin-left: 225px;
+  /*text-shadow: 1px 1px 0 #05FFE1;*/
